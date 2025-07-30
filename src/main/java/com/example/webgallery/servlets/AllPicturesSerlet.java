@@ -1,7 +1,5 @@
 package com.example.webgallery.servlets;
 
-import com.example.webgallery.dao.FolderDao;
-import com.example.webgallery.model.Folder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,14 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/addfolder")
-public class AddFolderServlet extends HttpServlet {
-    private static final FolderDao folderDao = FolderDao.getInstance();
+@WebServlet("/allpictures")
+public class AllPicturesSerlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String folderName = request.getParameter("folderName");
-        String folderOwner = request.getParameter("userId");
-        Folder folder = new Folder(folderName, folderOwner);
-        folderDao.addFolder(folder);
-        response.sendRedirect("/allfolders.jsp");
+        String folderId = request.getParameter("folderId");
+        request.getSession().setAttribute("folderName", folderName);
+        request.getSession().setAttribute("folderId", folderId);
+        response.sendRedirect("/pictures.jsp");
     }
 }

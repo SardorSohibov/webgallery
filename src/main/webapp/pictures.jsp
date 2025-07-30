@@ -1,4 +1,6 @@
-<%--
+<%@ page import="com.example.webgallery.dao.ImageDao" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.example.webgallery.model.Image" %><%--
   Created by IntelliJ IDEA.
   User: sohib
   Date: 7/27/2025
@@ -6,6 +8,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%! private static final ImageDao imagedao = ImageDao.getInstance();%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,11 +86,6 @@
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .card__image {
-            width: 100%;
-            height: 100%;
-        }
-
         .card:hover {
             transform: scale(1.05);
             box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
@@ -150,12 +148,41 @@
             object-fit: cover;
         }
 
+        /* Qoramtir shaffof fon */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7); /* Orqa fonni qoraytiradi */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* Modal box dizayni */
+        .modal-box {
+            background-color: #1e293b; /* Modalning o‘zi */
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        }
+
     </style>
 </head>
 <body>
-
+<%
+    if (session.getAttribute("userId") == null) {
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
+    }
+%>
 <div class="navbar">
-    <div class="left">Welcome, User</div>
+    <div class="left"><%= session.getAttribute("folderName") %>
+    </div>
     <div class="right">
         <form method="get" style="margin: 0;">
             <input type="hidden" name="action" value="showAddForm">
@@ -169,68 +196,84 @@
 <% String action = request.getParameter("action");
     if ("showDeleteForm".equals(action)) {
 %>
-<div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
-    <h3>Do you want to delete this folder?</h3>
-    <form method="post" action="/deletepicture">
-        <div style="display: flex; justify-content: space-between;">
-            <button type="submit"
-                    style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
-                Yes
-            </button>
-            <a href="pictures.jsp"
-               style="background-color:#2563eb; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">No</a>
+<div class="modal-overlay">
+    <div class="modal-box">
+        <div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
+            <h3>Do you want to delete this image?</h3>
+            <form method="post" action="/deletepicture">
+                <div style="display: flex; justify-content: space-between;">
+                    <button type="submit"
+                            style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
+                        Yes
+                    </button>
+                    <a href="pictures.jsp"
+                       style="background-color:#2563eb; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">No</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 <%
     }
     if ("showAddForm".equals(action)) {
 %>
-<div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
-    <h3>Create New Folder</h3>
-    <form method="post" action="/addpicture">
-        <input type="text" name="pictureName" placeholder="Picture name" required
-               style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-        <textarea rows="4" name="pictureDescription" placeholder="Picture description" required
-                  style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;"></textarea>
-        <label for="image-upload"
-               style="display: inline-block; background-color: #2563eb; color: white;
+<div class="modal-overlay">
+    <div class="modal-box">
+        <div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
+            <h3>Create New Folder</h3>
+            <form method="post" action="/addpicture" enctype="multipart/form-data">
+                <input name="folderId" type="hidden" value="<%= session.getAttribute("folderId")%>">
+                <input type="text" name="title" placeholder="Picture name" required
+                       style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
+                <textarea rows="4" name="description" placeholder="Picture description" required
+                          style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;"></textarea>
+                <label for="image-upload"
+                       style="display: inline-block; background-color: #2563eb; color: white;
               padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px;
               font-family: sans-serif; margin-bottom: 10px;">
-            🖼️ Upload Image
-        </label>
+                    🖼️ Upload Image
+                </label>
 
-        <input type="file" id="image-upload" name="image" accept="image/*" required
-               style="display: none;">
-        <div style="display: flex; justify-content: space-between;">
-            <button type="submit"
-                    style="background-color: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
-                Add
-            </button>
-            <a href="pictures.jsp"
-               style="background-color: #dc2626; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">Cancel</a>
+                <input type="file" id="image-upload" name="image" accept="image/*" required
+                       style="display: none;">
+                <div style="display: flex; justify-content: space-between;">
+                    <button type="submit"
+                            style="background-color: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
+                        Add
+                    </button>
+                    <a href="pictures.jsp"
+                       style="background-color: #dc2626; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">Cancel</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 <%}%>
 
 <div class="file-container">
     <!-- From Uiverse.io by D3OXY -->
+    <% ArrayList<Image> images = imagedao.getAllImages(session.getAttribute("folderId").toString());
+        for (Image image : images) {
+
+    %>
     <div class="card">
-        <img src="images/photo_2025-02-13_23-37-46.jpg" alt="xatolik" class="profile-img">
+        <img src="<%= image.getUrl()%>" alt="xatolik" class="profile-img">
         <div class="card__content">
-            <p class="card__title">Project Name</p>
-            <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco.</p>
-            <button class="card__button">Download</button>
+            <p class="card__title"><%= image.getTitle()%>
+            </p>
+            <p class="card__description"><%= image.getDescription()%>
+            </p>
+            <button class="card__button">
+                <a href="<%=image.getUrl()%>" style="text-decoration: none; color: inherit;">Download</a>
+            </button>
             <form method="get" style="margin: 0; display: inline-block">
                 <input type="hidden" name="action" value="showDeleteForm">
-                <input type="hidden" name="folderId" value="unknown">
+                <input type="hidden" name="imageId" value="<%= image.getId()%>">
                 <button class="card__button secondary">Delete</button>
             </form>
         </div>
     </div>
+    <%}%>
 </div>
 
 </body>

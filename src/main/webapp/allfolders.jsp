@@ -1,4 +1,7 @@
-<%--
+<%@ page import="com.example.webgallery.dao.FolderDao" %>
+<%@ page import="com.example.webgallery.dao.ImageDao" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.example.webgallery.model.Folder" %><%--
   Created by IntelliJ IDEA.
   User: sohib
   Date: 7/27/2025
@@ -6,6 +9,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%! private static final FolderDao folderDao = FolderDao.getInstance();%>
+<%! private static final ImageDao imageDao = ImageDao.getInstance(); %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -209,11 +214,28 @@
             background-color: #b91c1c;
         }
 
-        .file-form {
-            margin: 0;
-            padding: 0;
-            display: inline-block;
+        /* Qoramtir shaffof fon */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7); /* Orqa fonni qoraytiradi */
+            display: flex;
             justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* Modal box dizayni */
+        .modal-box {
+            background-color: #1e293b; /* Modalning o‘zi */
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
         }
     </style>
 </head>
@@ -223,7 +245,6 @@
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 %>
-
 <div class="navbar">
     <div class="left">Welcome, <%= session.getAttribute("username") %>
     </div>
@@ -241,45 +262,59 @@
     String action = request.getParameter("action");
     if ("showAddForm".equals(action)) {
 %>
-<div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
-    <h3>Create New Folder</h3>
-    <form method="post" action="/addfolder">
-        <input type="text" name="folderName" placeholder="Folder name" required
-               style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-        <div style="display: flex; justify-content: space-between;">
-            <button type="submit"
-                    style="background-color: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
-                Create
-            </button>
-            <a href="allfolders.jsp"
-               style="background-color: #dc2626; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">Cancel</a>
+<div class="modal-overlay">
+    <div class="modal-box">
+        <div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
+            <h3>Create New Folder</h3>
+            <form method="post" action="/addfolder">
+                <input name="userId" type="hidden" value="<%= session.getAttribute("userId")%>">
+                <input type="text" name="folderName" placeholder="Folder name" required
+                       style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
+                <div style="display: flex; justify-content: space-between;">
+                    <button type="submit"
+                            style="background-color: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
+                        Create
+                    </button>
+                    <a href="allfolders.jsp"
+                       style="background-color: #dc2626; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">Cancel</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 <%
     }
     if ("showDeleteForm".equals(action)) {
 %>
-<div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
-    <h3>Do you want to delete this folder?</h3>
-    <form method="post" action="/deletefolder">
-        <div style="display: flex; justify-content: space-between;">
-            <button type="submit"
-                    style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
-                Yes
-            </button>
-            <a href="allfolders.jsp"
-               style="background-color:#2563eb; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">No</a>
+<div class="modal-overlay">
+    <div class="modal-box">
+        <div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
+            <h3>Do you want to delete this folder?</h3>
+            <form method="post" action="/deletefolder">
+                <input name="folderId" type="hidden" value="<%= request.getParameter("folderId")%>">
+                <div style="display: flex; justify-content: space-between;">
+                    <button type="submit"
+                            style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 5px;">
+                        Yes
+                    </button>
+                    <a href="allfolders.jsp"
+                       style="background-color:#2563eb; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">No</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 <%
     }
 %>
 <div class="file-container">
-    <input type="hidden" name="folderId" value="unknown">
+    <% ArrayList<Folder> folders = folderDao.getAllFoldersByUserId(session.getAttribute("userId").toString());
+        for (Folder folder : folders) {
+    %>
     <div class="card">
-        <form action="pictures.jsp" method="post">
+        <form action="/allpictures" method="post">
+            <input type="hidden" name="folderId" value="<%= folder.getId()%>">
+            <input type="hidden" name="folderName" value="<%= folder.getFolderName()%>">
             <div class="top-section" onclick="this.closest('form').submit()" style="cursor: pointer;">
                 <div class="border"></div>
                 <div class="icons">
@@ -298,19 +333,19 @@
             </div>
         </form>
         <div class="bottom-section">
-            <span class="title">UNIVERSE OF UI</span>
+            <span class="title"><%= folder.getFolderName()%></span>
             <div class="row row1">
                 <div class="item">
-                    <span class="big-text">2626</span>
-                    <span class="regular-text">UI elements</span>
+                    <span class="big-text"><%= imageDao.getImageCountByFolderId(folder.getId())%></span>
+                    <span class="regular-text">images</span>
                 </div>
                 <div class="item">
-                    <span class="big-text">100%</span>
-                    <span class="regular-text">Free for use</span>
+                    <span class="big-text"><%= imageDao.GetAllImageSizeByFolderid(folder.getId())%></span>
+                    <span class="regular-text">KB</span>
                 </div>
                 <form method="get" style="margin: 0;">
                     <input type="hidden" name="action" value="showDeleteForm">
-                    <input type="hidden" name="folderId" value="unknown">
+                    <input type="hidden" name="folderId" value="<%= folder.getId()%>">
                     <div class="item" onclick="this.closest('form').submit()" style="cursor: pointer;">
                         🗑️
                     </div>
@@ -318,6 +353,7 @@
             </div>
         </div>
     </div>
+    <%}%>
 </div>
 
 </body>
