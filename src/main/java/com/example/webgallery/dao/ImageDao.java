@@ -46,6 +46,17 @@ public class ImageDao {
             throw new RuntimeException(e);
         }
     }
+    public void deleteImageById(String imageId) {
+        PreparedStatement pstmt = null;
+        try (Connection connection = DatabaseConnector.getConnection()){
+            String sql = "update images set deleted = true where id = ?";
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, imageId);
+            pstmt.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public  ArrayList<Image> getAllImages(String folderId) {
         ArrayList<Image> images = new ArrayList<>();
         PreparedStatement pstmt = null;

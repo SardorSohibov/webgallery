@@ -34,6 +34,7 @@
         .navbar .left {
             font-size: 20px;
             font-weight: bold;
+            align-self: center;
         }
 
         .navbar .right {
@@ -181,7 +182,7 @@
     }
 %>
 <div class="navbar">
-    <div class="left"><%= session.getAttribute("folderName") %>
+    <div class="left"> Folder: <%= session.getAttribute("folderName") %>
     </div>
     <div class="right">
         <form method="get" style="margin: 0;">
@@ -201,6 +202,7 @@
         <div style="background-color: #1e293b; color: white; padding: 20px; width: 300px; margin: 20px auto; border-radius: 10px;">
             <h3>Do you want to delete this image?</h3>
             <form method="post" action="/deletepicture">
+                <input type="hidden" name="imageId" value="<%= request.getParameter("imageId")%>">
                 <div style="display: flex; justify-content: space-between;">
                     <button type="submit"
                             style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 5px;">

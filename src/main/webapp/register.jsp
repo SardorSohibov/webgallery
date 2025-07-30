@@ -3,14 +3,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register - ToDo App</title>
+    <title>Register - Webgallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #e0f7fa;
+            background-color: #0f172a;
+            color: white;
         }
 
         .container {
@@ -20,7 +21,7 @@
         }
 
         .register {
-            color: #00ca4e;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: bold;
@@ -35,8 +36,8 @@
             width: 350px;
             flex-direction: column;
             gap: 25px;
-            background: #1e1e1e;
-            box-shadow: 12px 12px 25px rgba(0, 0, 0, 0.7),
+            background: #1e293b;
+            box-shadow: 12px 12px 25px rgba(0, 0, 0, 0.4),
             -12px -12px 25px rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             padding: 20px 0;
@@ -45,6 +46,7 @@
         .inputBox {
             position: relative;
             width: 250px;
+            margin-bottom: 15px;
         }
 
         .inputBox input {
@@ -53,9 +55,9 @@
             outline: none;
             border: none;
             background: transparent;
-            border-left: 2px solid #00e85f;
-            border-bottom: 2px solid #00e85f;
-            color: #00ca4e;
+            border-left: 2px solid #334155;
+            border-bottom: 2px solid #334155;
+            color: white;
             font-size: 1em;
             border-bottom-left-radius: 8px;
             transition: 0.3s ease;
@@ -70,7 +72,7 @@
             padding: 10px;
             pointer-events: none;
             font-size: 12px;
-            color: #00ca4e;
+            color: #94a3b8;
             text-transform: uppercase;
             transition: 0.5s;
             letter-spacing: 3px;
@@ -82,14 +84,14 @@
             transform: translateX(113px) translateY(-15px);
             font-size: 0.8em;
             padding: 5px 10px;
-            background: #00e85f;
+            background: rgb(4, 159, 187);
             color: #121212;
             letter-spacing: 0.2em;
         }
 
         .inputBox input:focus,
         .inputBox input:valid {
-            border: 2px solid #00e85f;
+            border: 2px solid #60a5fa;
             border-radius: 8px;
         }
 
@@ -97,24 +99,25 @@
             height: 40px;
             width: 120px;
             border-radius: 5px;
-            border: 2px solid #00e85f;
+            border: 2px solid #60a5fa;
             cursor: pointer;
             background-color: transparent;
             transition: 0.3s;
-            color: #00e85f;
+            color: #94a3b8;
             text-transform: uppercase;
             font-size: 10px;
             letter-spacing: 2px;
         }
 
         .enter:hover {
-            background-color: #00e85f;
+            background-color: rgb(4, 159, 187);
             color: #121212;
         }
+
         .login {
             position: relative;
             --primary-color: #e0f7fa;
-            --hovered-color: #00ca4e;
+            --hovered-color: #60a5fa;
             border: none;
             background: none;
             cursor: pointer;
@@ -165,37 +168,35 @@
     </style>
 </head>
 <body>
-
-<div class="container">
-    <%if (request.getAttribute("error") != null) {%>
-    <%if (request.getAttribute("error").equals("username already exists")) {%>
-    <div id="error-message" class="alert alert-danger" role="alert">
-        Username already exists!
-    </div>
-    <%}%>
-    <%if (request.getAttribute("error").equals("passwords do not match")) {%>
-    <div id="error-message" class="alert alert-danger" role="alert">
-        Passwords do not match!
-    </div>
-    <%
-            }
+<%-- ❗ Alert xabari container dan oldin --%>
+<%if (request.getAttribute("error") != null) {%>
+<%if (request.getAttribute("error").equals("username already exists")) {%>
+<div id="error-message" class="alert alert-danger text-center" role="alert"
+     style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 300px; z-index: 1000;">
+    Username already exists!
+</div>
+<% } %>
+<%if (request.getAttribute("error").equals("passwords do not match")) {%>
+<div id="error-message" class="alert alert-danger text-center" role="alert"
+     style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 300px; z-index: 1000;">
+    Passwords do not match!
+</div>
+<%
         }
-    %>
+    }
+%>
+<div class="container">
     <form action="/register" method="post">
         <div class="card">
-
-            <a class="register">Sign up</a>
-
+            <h1 class="register">Sign up</h1>
             <div class="inputBox">
                 <input type="text" name="username" required>
                 <span>Username</span>
             </div>
-
             <div class="inputBox">
                 <input type="password" name="password" required>
                 <span>Password</span>
             </div>
-
             <div class="inputBox">
                 <input type="password" name="confirmPassword" required>
                 <span>Confirm Password</span>

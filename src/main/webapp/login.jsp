@@ -10,14 +10,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Simple ToDo App</title>
+    <title>Webgallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #00ca4e;
+            background-color: #0f172a;
+            color: white;
         }
 
         .container {
@@ -27,7 +28,7 @@
         }
 
         .login {
-            color: #00ca4e;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: bold;
@@ -42,8 +43,8 @@
             width: 350px;
             flex-direction: column;
             gap: 35px;
-            background: #1e1e1e;
-            box-shadow: 12px 12px 25px rgba(0, 0, 0, 0.7),
+            background: #1e293b;
+            box-shadow: rgba(0, 0, 0, 0.4) 0 10px 25px,
             -12px -12px 25px rgba(255, 255, 255, 0.05);
             border-radius: 12px;
         }
@@ -51,6 +52,7 @@
         .inputBox {
             position: relative;
             width: 250px;
+            margin-bottom: 10px;
         }
 
         .inputBox input {
@@ -59,9 +61,9 @@
             outline: none;
             border: none;
             background: transparent;
-            border-left: 2px solid #00ca4e;
-            border-bottom: 2px solid #00ca4e;
-            color: #00ca4e;
+            border-left: 2px solid #334155;
+            border-bottom: 2px solid #334155;
+            color: white;
             font-size: 1em;
             border-bottom-left-radius: 8px;
             transition: 0.3s ease;
@@ -76,7 +78,7 @@
             padding: 10px;
             pointer-events: none;
             font-size: 12px;
-            color: #00ca4e;
+            color: #94a3b8;
             text-transform: uppercase;
             transition: 0.5s;
             letter-spacing: 3px;
@@ -88,14 +90,14 @@
             transform: translateX(113px) translateY(-15px);
             font-size: 0.8em;
             padding: 5px 10px;
-            background: #00ca4e;
+            background: rgb(4, 159, 187);
             color: #121212;
             letter-spacing: 0.2em;
         }
 
         .inputBox input:focus,
         .inputBox input:valid {
-            border: 2px solid #00ca4e;
+            border: 2px solid #60a5fa;
             border-radius: 8px;
         }
 
@@ -103,25 +105,25 @@
             height: 45px;
             width: 100px;
             border-radius: 5px;
-            border: 2px solid #00ca4e;
+            border: 2px solid #60a5fa;
             cursor: pointer;
             background-color: transparent;
             transition: 0.3s;
-            color: #00ca4e;
+            color: #94a3b8;
             text-transform: uppercase;
             font-size: 10px;
             letter-spacing: 2px;
         }
 
         .enter:hover {
-            background-color: #00ca4e;
+            background-color:rgb(4, 159, 187);
             color: #121212;
         }
 
         .signup {
             position: relative;
             --primary-color: #e0f7fa;
-            --hovered-color: #00ca4e;
+            --hovered-color: #60a5fa;
             border: none;
             background: none;
             cursor: pointer;
@@ -172,16 +174,17 @@
     </style>
 </head>
 <body>
-
+<%-- ❗ Alert xabari container dan oldin --%>
+<% if (request.getAttribute("error") != null) { %>
+<div id="error-message" class="alert alert-danger text-center" role="alert"
+     style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 300px; z-index: 1000;">
+    Username or password is incorrect!
+</div>
+<% } %>
 <div class="container">
-    <%if (request.getAttribute("error") != null) {%>
-    <div id="error-message" class="alert alert-danger" role="alert">
-        Username or password is incorrect!
-    </div>
-    <%}%>
     <form action="/login" method="post">
         <div class="card">
-            <a class="login">Log in</a>
+            <h1 class="login">Log in</h1>
             <div class="inputBox">
                 <input type="text" required name="username">
                 <span class="user">Username</span>
