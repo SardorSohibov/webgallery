@@ -14,7 +14,8 @@ public class ImageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String fileName = req.getHttpServletMapping().getMatchValue();
-        byte[] bytes = FileManager.getFileBytes(fileName);
+        String contextPath = "http://localhost:8080/images"+req.getPathInfo();
+        byte[] bytes = FileManager.getFileBytes(contextPath);
         resp.setContentType("application/octet-stream");
         String originalName = fileName.substring(fileName.indexOf('_') + 1);
         resp.setHeader("Content-Disposition", "attachment; filename=\"" + originalName + "\"");

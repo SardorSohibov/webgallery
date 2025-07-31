@@ -24,7 +24,8 @@ public class AddPictureServlet extends HttpServlet {
         String folderID = request.getParameter("folderId");
         Part filePart = request.getPart("image");
         String url = FileManager.uploadFile(filePart);
-        Image image = new Image(url, title, description, folderID, (int) (filePart.getSize() / 1024));
+        byte[] bytes = filePart.getInputStream().readAllBytes();
+        Image image = new Image(url, title, description, folderID, (int) (filePart.getSize() / 1024), bytes);
         imageDao.addImage(image);
         response.sendRedirect("/pictures.jsp");
 

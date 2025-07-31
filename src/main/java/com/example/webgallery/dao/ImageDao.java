@@ -22,7 +22,7 @@ public class ImageDao {
     public static void addImage(Image image) {
         PreparedStatement pstmt = null;
         try (Connection connection = DatabaseConnector.getConnection()) {
-            String sql = "INSERT INTO images (id, url, title, description, folderid, size) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO images (id, url, title, description, folderid, size,bytes) VALUES (?, ?, ?, ?, ?, ?,?)";
             pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, image.getId());
             pstmt.setString(2, image.getUrl());
@@ -30,6 +30,7 @@ public class ImageDao {
             pstmt.setString(4, image.getDescription());
             pstmt.setString(5, image.getFolderId());
             pstmt.setInt(6, image.getSize());
+            pstmt.setBytes(7, image.getBytes());
             pstmt.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);

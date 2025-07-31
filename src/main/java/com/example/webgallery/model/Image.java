@@ -17,8 +17,9 @@ public class Image {
     private String folderId;
     private Integer size;
     private boolean deleted;
+    private byte[] bytes;
 
-    public Image(String url, String title, String description, String folderId, Integer size) {
+    public Image(String url, String title, String description, String folderId, Integer size, byte[] bytes) {
         this.url = url;
         this.title = title;
         this.description = description;
@@ -26,6 +27,7 @@ public class Image {
         this.id = UUID.randomUUID().toString();
         this.size = size;
         this.deleted = false;
+        this.bytes = bytes;
     }
 
     public Image() {
